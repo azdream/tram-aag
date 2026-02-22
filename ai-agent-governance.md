@@ -79,7 +79,7 @@
 
 ---
 
-## 6. Maintenance & Governance (Self-Governance)
+## 5. Maintenance & Governance (Self-Governance)
 
 ### 🔐 Modification Policy
 - **Review Requirement:** `ai-agent-governance.md`에 대한 모든 수정 요청은 **Chris와 트램(Tram)의 공동 검토 및 합의** 후에만 허용된다.
