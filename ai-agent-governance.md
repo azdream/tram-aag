@@ -18,6 +18,11 @@
 - **Simplicity First:** 불필요한 추상화나 과도한 설계를 배제한다. 100줄로 끝낼 수 있는 일을 1000줄로 늘리지 않는다. (Speculative flexibility 금지)
 - **Token Efficiency (TOON):** 대량 데이터 입출력 시 TOON(Token-Oriented Object Notation) 포맷을 사용하여 비용을 절감하고 정확도를 높인다.
 - **Context Engineering (Situational Retrieval):** 에이전트가 정보를 검색(RAG)할 때 파편화된 데이터(Chunk)에 문서 전체의 맥락을 결합(Contextualize)하여 할루시네이션을 방지하고 정확도를 극대화한다.
+- **Skill Auto-Activation:** 자동으로 Skill을 활성화하여 일관성을 높인다 (키워드, 의도 패턴, 파일 경로 트리거 활용).
+- **Dev Docs System:** 계획, 맥락, 작업 체크리스트를 담은 개발 문서를 체계적으로 관리하여 작업 이탈을 방지한다.
+- **Agent Specialization:** 코드 리뷰, 오류 해결, 계획 수립 등 특정 역할에 맞는 전문 에이전트를 활용한다.
+- **Utility Scripts:** 자주 사용하는 작업에 대한 유틸리티 스크립트를 Skill에 첨부하여 재사용성을 높인다.
+- **Hooks System:** 코드 포맷팅, 빌드 확인, 오류 처리 등을 자동화하는 Hook 시스템을 구축한다.
 
 ---
 
@@ -88,3 +93,29 @@
     2. 트램의 영향 분석 및 리뷰 보고
     3. Chris의 최종 승인
     4. Main Branch 반영 및 웹페이지 자동 업데이트
+
+---
+
+## 📢 Recent Updates (Blog)
+
+### AAG 업데이트: Tram AI 에이전트 거버넌스 개선
+
+#### 소개
+최근 Reddit 게시물에서 얻은 통찰력을 바탕으로 Tram AI 에이전트 거버넌스(AAG)의 몇 가지 주요 측면을 개선했습니다. 이 게시물에서는 Claude Code를 사용하는 데 대한 팁과 트릭을 제공하며, 이는 AAG의 효율성과 일관성을 높이는 데 도움이 됩니다.
+
+#### 주요 업데이트
+*   **Skill Auto-Activation:** 자동으로 Skill을 활성화하여 일관성을 높입니다 (키워드, 의도 패턴, 파일 경로 트리거 활용).
+*   **Dev Docs System:** 계획, 맥락, 작업 체크리스트를 담은 개발 문서를 체계적으로 관리하여 작업 이탈을 방지합니다.
+*   **Agent Specialization:** 코드 리뷰, 오류 해결, 계획 수립 등 특정 역할에 맞는 전문 에이전트를 활용합니다.
+*   **Utility Scripts:** 자주 사용하는 작업에 대한 유틸리티 스크립트를 Skill에 첨부하여 재사용성을 높입니다.
+*   **Hooks System:** 코드 포맷팅, 빌드 확인, 오류 처리 등을 자동화하는 Hook 시스템을 구축합니다.
+
+#### 출처
+[Claude Code is a beast - Tips from 6 months of hardcore use](https://www.reddit.com/r/ClaudeAI/comments/1oivjvm/claude_code_is_a_beast_tips_from_6_months_of/?share_id=xgILJBys0BxT3Wpy5t6ij&utm_content=2&utm_medium=ios_app&utm_name=ioscss&utm_source=share&utm_term=1)
+
+#### 결론
+이러한 업데이트를 통해 Tram의 성능과 안정성을 더욱 향상시킬 수 있을 것으로 기대합니다. AAG에 대한 지속적인 관심과 지원에 감사드립니다.
+
+---
+
+Test edit by Tram - Re-check
