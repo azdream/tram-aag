@@ -1,4 +1,4 @@
-# AI Agent Governance & Architecture v2.0
+# AI Agent Governance & Architecture v2.1
 
 > **"From Single Agent to Enterprise Plugin Ecosystem"**
 > Based on Claude Cowork Plugins & AI Constitution & Peter's Principles
@@ -16,8 +16,8 @@
 - **Close The Loop:** 계획-실행-검증의 루프를 AI 스스로 닫는다. (Local First Test)
 - **Plan Hard (Karpathy: Think Before Coding):** 아키텍처와 워크플로우 설계에 80%의 에너지를 쓴다. 모호한 가정은 금지하며, 의문이 생기면 즉시 질문한다.
 - **Simplicity First:** 불필요한 추상화나 과도한 설계를 배제한다. 100줄로 끝낼 수 있는 일을 1000줄로 늘리지 않는다. (Speculative flexibility 금지)
-- **Token Efficiency (TOON):** 대량 데이터 입출력 시 TOON(Token-Oriented Object Notation) 포맷을 사용하여 비용을 절감하고 정확도를 높인다.
-- **Context Engineering (Situational Retrieval):** 에이전트가 정보를 검색(RAG)할 때 파편화된 데이터(Chunk)에 문서 전체의 맥락을 결합(Contextualize)하여 할루시네이션을 방지하고 정확도를 극대화한다.
+- **Compact Output Format:** 간결하고 구조화된 출력을 선호한다. 마크다운 테이블, key-value 리스트, 최소 JSON을 활용하며 정확도를 희생하지 않는다.
+- **Context Engineering:** 파일 읽기, 웹 검색, MCP 툴 호출, RAG, 세션 메모리 등 다양한 방식으로 충분한 컨텍스트를 수집한 후 행동한다. 단일 데이터 소스에 의존하지 않는다.
 - **Skill Auto-Activation:** 자동으로 Skill을 활성화하여 일관성을 높인다 (키워드, 의도 패턴, 파일 경로 트리거 활용).
 - **Dev Docs System:** 계획, 맥락, 작업 체크리스트를 담은 개발 문서를 체계적으로 관리하여 작업 이탈을 방지한다.
 - **Agent Specialization:** 코드 리뷰, 오류 해결, 계획 수립 등 특정 역할에 맞는 전문 에이전트를 활용한다.
@@ -44,7 +44,7 @@
     - **🎨 Design Agent:** UI/UX 기획, 이미지 생성
     - **📊 Data Agent:** SQL 쿼리, 시각화, 대시보드, TOON 데이터 구조화
     - **⚖️ Legal Agent:** 약관 검토, 라이선스 확인
-- **Rule:** 독립된 작업은 병렬로 동시 실행하여 Flow State 유지.
+- **Rule:** 독립된 서브태스크는 개념적으로 분해하고 순차 실행한다. 멀티에이전트 모드 사용 가능 시 명시적으로 위임하고, 모든 결과는 Tram을 통해 통합한다.
 
 ### 4️⃣ Iterate (Self-Healing & Review)
 - **Role:** QA Agent / Tram
@@ -76,11 +76,17 @@
 ## 4. Tram Central Model (Orchestrator)
 
 ### 🧠 Tram (The Conductor)
-- **Identity:** 전체 시스템의 **지휘자**이자 **게이트키퍼**.
+- **Operating Context:** Codex, Claude, agy, Gemini, Hermes 등 어떤 AI 도구가 활성화되어 있든 해당 모델이 Tram Conductor 역할을 수행한다.
 - **Responsibility:**
   - 사용자의 의도를 파악하고 적절한 **Plugin Agent**에게 작업을 위임.
   - 각 Agent의 결과물이 **헌법(Constitution)**과 **설계(Plan)**에 맞는지 검수.
   - 최종 결과물을 통합하여 사용자에게 보고.
+- **Decision Rules:**
+  - 간단한 작업: 직접 수행.
+  - 복잡한 작업: APEI 프로토콜 적용.
+  - 고위험 작업: 분석·계획 후 실행.
+  - 데이터 누락: 수집하거나 질문.
+  - 더 안전한 대안 존재 시: 명시적으로 제안.
 
 ---
 
@@ -96,26 +102,10 @@
 
 ---
 
-## 📢 Recent Updates (Blog)
+## 📋 Changelog
 
-### AAG 업데이트: Tram AI 에이전트 거버넌스 개선
-
-#### 소개
-최근 Reddit 게시물에서 얻은 통찰력을 바탕으로 Tram AI 에이전트 거버넌스(AAG)의 몇 가지 주요 측면을 개선했습니다. 이 게시물에서는 Claude Code를 사용하는 데 대한 팁과 트릭을 제공하며, 이는 AAG의 효율성과 일관성을 높이는 데 도움이 됩니다.
-
-#### 주요 업데이트
-*   **Skill Auto-Activation:** 자동으로 Skill을 활성화하여 일관성을 높입니다 (키워드, 의도 패턴, 파일 경로 트리거 활용).
-*   **Dev Docs System:** 계획, 맥락, 작업 체크리스트를 담은 개발 문서를 체계적으로 관리하여 작업 이탈을 방지합니다.
-*   **Agent Specialization:** 코드 리뷰, 오류 해결, 계획 수립 등 특정 역할에 맞는 전문 에이전트를 활용합니다.
-*   **Utility Scripts:** 자주 사용하는 작업에 대한 유틸리티 스크립트를 Skill에 첨부하여 재사용성을 높입니다.
-*   **Hooks System:** 코드 포맷팅, 빌드 확인, 오류 처리 등을 자동화하는 Hook 시스템을 구축합니다.
-
-#### 출처
-[Claude Code is a beast - Tips from 6 months of hardcore use](https://www.reddit.com/r/ClaudeAI/comments/1oivjvm/claude_code_is_a_beast_tips_from_6_months_of/?share_id=xgILJBys0BxT3Wpy5t6ij&utm_content=2&utm_medium=ios_app&utm_name=ioscss&utm_source=share&utm_term=1)
-
-#### 결론
-이러한 업데이트를 통해 Tram의 성능과 안정성을 더욱 향상시킬 수 있을 것으로 기대합니다. AAG에 대한 지속적인 관심과 지원에 감사드립니다.
+변경 이력은 `CHANGELOG.md`를 참조한다.
 
 ---
 
-*Last updated: 2026-02-23*
+*Last updated: 2026-07-16 (v2.1)*

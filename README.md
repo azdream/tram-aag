@@ -11,11 +11,11 @@
 ## Why We Published This (공표 목적)
 1. **Transparency & Trust**: To clearly state the "Constitution" that governs our AI agents, ensuring they remain helpful, harmless, and honest.
 2. **Standardization**: To establish the **APEI Protocol** (Analyze-Plan-Execute-Iterate) as a stable design model for complex task handling.
-3. **Efficiency**: To optimize **Token Usage** through specialized data formats like **TOON** (Token-Oriented Object Notation), reducing costs while increasing accuracy.
+3. **Efficiency**: To optimize **output quality** through compact, structured formats (markdown tables, key-value lists), reducing cognitive load while increasing accuracy.
 
 1. **투명성과 신뢰**: 에이전트를 규제하는 '헌법'을 명시하여, AI가 항상 유익하고 무해하며 정직하게 동작하도록 보장합니다.
 2. **표준화**: 복잡한 작업 처리를 위한 안정적인 설계 모델인 **APEI 프로토콜**(Analyze-Plan-Execute-Iterate)을 정립합니다.
-3. **효율성**: **TOON**(Token-Oriented Object Notation)과 같은 전용 데이터 포맷을 통해 **토큰 사용 효율**을 극대화하고, 비용 절감과 정확도 향상을 동시에 달성합니다.
+3. **효율성**: 마크다운 테이블, key-value 리스트 등 간결하고 구조화된 출력 포맷을 통해 **정보 전달 효율**을 극대화하고, 정확도 향상을 달성합니다.
 
 ---
 
@@ -29,4 +29,5 @@
 ---
 
 ## Documents
-- [AI Agent Governance & Architecture (v2.0)](./ai-agent-governance.md)
+- [AI Agent Governance & Architecture (v2.1)](./ai-agent-governance.md)
+- [Changelog](./CHANGELOG.md)
