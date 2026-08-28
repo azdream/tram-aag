@@ -13,10 +13,12 @@
 
 ---
 
-# 🛡️ AI Agent Governance & Harness Architecture (AAG v2.0)
+# 🛡️ AI Agent Governance & Harness Architecture (AAG v2.2)
 
 > **"Autonomous Execution, Deterministic Verification, Human-AI Synergy"**
 > 본 규정은 프로젝트 내 모든 AI 에이전트와 오케스트레이션 하네스(Harness)의 개발·운영 표준을 정의합니다.
+>
+> 📅 **Last Updated:** 2026-08-28 (v2.2 Harness Architecture Update)
 
 ---
 
