@@ -1,5 +1,27 @@
 # AAG Changelog
 
+## v2.2 — 2026-08-28
+
+### 리뷰어: Antigravity (agy)
+### 승인: Chris
+
+### 변경 내용
+
+#### AAG v2.0 (Harness Architecture) 보완 개정
+- **Contract-First & Deterministic Verification 명문화**: APEI 각 단계에 입력/출력 스키마 명세 및 단일 검증 명령어(`verification_command`) 강제.
+- **수정 범위 격리 (Scope Boundaries)**: AI가 임의로 전역 설정/프로젝트 환경을 수정하지 못하도록 `Allowed Scope`와 `Forbidden Scope` 규칙 규정.
+- **APEI-H Protocol 구체화**:
+  - `Analyze`: 추측 기반 코딩 금지, 모호한 요구사항 질의 명확화.
+  - `Plan`: 하위 태스크(DAG) 분해 기준 수립.
+  - `Execute`: 컨텍스트 세션 분리(Isolation), 원자적 변경(Atomic Changes - 단일 작업당 최대 5개 파일), `Forbidden Scope` 명시.
+  - `Iterate`: 사람의 육안 검수 대신 Exit Code 0 기반 3단계 검증 및 자가 치유(최대 3회), 초과 시 Git 자동 롤백.
+- **Hook Lifecycle 강화**: `UserPromptSubmit`, `PreExecution`, `PostToolUse`, `WorkerVerify`, `Stop` 5대 훅의 책임, 트리거, 실패 시 트리거 동작 명시.
+- **자원 한도 (Resource Limits) & Human Escalation Triggers**:
+  - 서브태스크 당 최대 5턴, 3회 자가치유 리트라이 한도 규정.
+  - 아키텍처 코어 변경, 보안/권한, 비용/배포, 치유 실패 시 인간 승인 위임 트리거 설정.
+
+---
+
 ## v2.1 — 2026-07-16
 
 ### 리뷰어: Antigravity (agy)
