@@ -17,6 +17,7 @@
 4. **Typesafe AI (타입 세이프 AI & 계약 우선주의):** 비정형 자연어 지시를 배제하고, 입력·도구 호출·최종 출력을 Pydantic, Zod, JSON Schema, TOON 등 엄격한 타입 계약으로 감싸 런타임 환각(Hallucination)을 원천 차단합니다.
 5. **경량 모델(SLM / Flash) 최적화:** 엄격한 타입 제약, 온톨로지 서브그래프 슬라이싱, 최소 컨텍스트 주입을 결합하여, 경량 모델(SLM, Flash/Mini)로도 고비용 Frontier 모델 이상의 신뢰성과 처리 속도, 90% 이상의 비용 절감을 달성합니다.
 6. **2단계 판정 이론 (Two-Tier Judgment Theory):** 비용 $0의 기계적·결정론적 판정(컴파일러, 린터, 테스트러너)을 1차 관문으로 두고, 검증된 결과에만 의미론적 평가(LLM-as-a-Judge)를 선별 적용하여 판정 신뢰도를 극대화합니다.
+7. **엔터프라이즈 신뢰 및 상용화 (Enterprise Trust & Commercialization):** 에이전트의 모든 의사결정을 추적하는 감사 로그(Audit Trail)와 사용자 경험(UX) 중심의 설명 가능성(Explainability)을 제공하여, B2B 상용 환경에서 요구하는 보안·비용·신뢰성(SLA) 기준을 완벽히 충족합니다.
 
 ---
 
@@ -810,6 +811,31 @@ TASK-02,"src/auth/router.py","pytest tests/test_router.py",pending
 * **🎨 Design & UX Plugin:** 와이어프레임 설계, 인터페이스 명세화.
 * **📊 Data & Ontology Plugin:** 데이터 추출/가공, 온톨로지 지식 그래프 동기화, TOON 구조화, 쿼리 검증.
 * **⚖️ Legal & Security Plugin:** 온톨로지 객체 권한 심사, 라이선스 적합성 검토, 취약점 정적 분석.
+
+---
+
+## 13. 🏢 Enterprise Commercialization & Trust Architecture (상용화 및 신뢰 아키텍처)
+
+엔터프라이즈 B2B 시장에서 AI 에이전트가 성공적으로 상용화되기 위해서는 '단순히 동작하는 것'을 넘어 **보안(Security), 비용 통제(Cost Control), 설명 가능성(Explainability), 그리고 신뢰(Trust)**를 보장해야 합니다. AAG v3.0은 상용 서비스를 위한 4대 신뢰 아키텍처를 강제합니다.
+
+### 1️⃣ Audit Trail & Compliance (감사 로그 및 규제 준수)
+* **결정론적 의사결정 추적:** TypeSafe AI(System 1)가 내린 Noul, Choice, Score의 모든 확률값(Confidence Score)과 선택 근거는 `trace_id` 단위로 불변(Immutable) 감사 로그에 기록됩니다.
+* **데이터 마스킹 & 격리 보관:** 감사 로그 저장 전 PII(개인정보) 및 민감한 사내 코드는 자동 마스킹 처리되며, SOC2 및 GDPR과 같은 기업용 보안/규제 컴플라이언스(Compliance) 심사를 위한 증적 자료로 활용됩니다.
+* **Escalation Record:** 에이전트가 판단을 포기하고 인간에게 개입을 요청한(Human Escalation) 사례는 별도의 데이터 마트로 수집되어 후속 모델 미세조정(Fine-Tuning) 및 온톨로지 보완에 사용됩니다.
+
+### 2️⃣ Cost Optimization & Predictable ROI (비용 최적화 및 예측 가능한 ROI)
+* **Token Budgeting (토큰 예산제):** 태스크별, 세션별, 그리고 고객사(Tenant)별로 소모 가능한 토큰 및 System 1/System 2 호출 횟수의 상한선(Budget)을 설정합니다.
+* **Zero-Cost Routing:** 사용자 인텐트 라우팅 및 가드레일 심사는 생성 토큰 비용이 발생하지 않는 System 1에서 우선 처리하므로, 기존 LLM 단일 아키텍처 대비 80% 이상의 클라우드 인프라 비용을 절감합니다. 
+* **비용 모니터링 대시보드:** 관리자 화면을 통해 각 에이전트 스웜이 절약한 시간(Man-Hour)과 소모한 API 비용을 정량적으로 대비(ROI)하여 실시간 제공합니다.
+
+### 3️⃣ Explainable UX & Human-in-the-Loop (설명 가능한 사용자 경험과 인간 개입)
+* **Glass-box UX (투명한 실행 과정 시각화):** 에이전트를 블랙박스(Black-box)로 두지 않습니다. 사용자는 에이전트가 현재 온톨로지의 어느 노드를 참조하고 있으며, 어떤 `Choice` 프리미티브가 선택되어 이 플러그인이 실행되었는지 UI 상에서 실시간 노드 하이라이팅으로 확인할 수 있습니다.
+* **Context-Rich Escalation:** 에이전트가 인간의 승인을 요청할 때(예: 배포 승인, 고액 환불 승인), 단순히 "승인하시겠습니까?"라고 묻지 않습니다. 
+  - *제공 정보:* "위험도 점수 4.2 (Score), 위반 정책: P-001 (Noul), 예상 영향도 (Ontology Impact)"를 한눈에 볼 수 있는 요약 카드를 함께 제공하여 사용자의 인지 부하를 최소화합니다.
+
+### 4️⃣ SLA & Performance Monitoring (서비스 수준 협약 및 모니터링)
+* **응답 지연 보장 (Latency SLA):** 사용자와의 직접적인 상호작용(예: 버튼 클릭 후 다음 행동 결정)은 TypeSafe 엔진을 거쳐 100ms 이내에 반응하도록 설계하여 실시간 애플리케이션 수준의 체감 속도를 보장합니다.
+* **Success Rate Tracking:** 태스크 완전 해결률, 자가 치유(Self-Healing) 성공률, 기계적 판정(Tier-1) 통과율을 분 단위 추세선으로 모니터링하여 에이전트 런타임의 안정성을 계량화합니다.
 
 ---
 
