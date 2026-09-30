@@ -7,7 +7,13 @@
 
 ### 변경 내용
 
-#### AAG v3.0 (Typesafe Harness & Agentic Loop Architecture) 대규모 개정
+#### AAG v3.0 (Typesafe Harness, Semantic Ontology & Agentic Loop) 대규모 개정
+- **Semantic Ontology (시맨틱 온톨로지 & 지식 그래프) 아키텍처 정립**:
+  - 단순 텍스트 청크 RAG를 넘어선 **OPLA (Object-Property-Link-Action)** 온톨로지 모델 도입.
+  - 엔티티 간 종속성과 비즈니스 불변식(Invariants)을 그래프로 구조화하여 관계적 환각 원천 방지.
+  - 온톨로지 1~2홉 서브그래프 슬라이싱을 통한 경량 모델(SLM)의 Multi-hop 정밀 추론 구현.
+  - 온톨로지 기반 객체 수준 보안 및 권한 제어(Object-Level RBAC/ABAC) 표준화.
+  - 시맨틱 온톨로지 레이어 아키텍처 Mermaid 다이어그램 추가.
 - **Harness Engineering (하네스 엔지니어링) 정립**:
   - 모델에 종속되지 않는 격리된 샌드박스 실행 환경(Sandbox Isolation) 규정.
   - 구문 트리(AST) 및 의존성 그래프 기반의 정밀 컨텍스트 슬라이싱(Context Slicing & Pruning) 표준화.
