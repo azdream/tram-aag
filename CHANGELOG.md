@@ -1,4 +1,35 @@
 # AAG Changelog
+ 
+## v3.0 — 2026-09-30
+
+### 리뷰어: Antigravity (agy)
+### 승인: Chris
+
+### 변경 내용
+
+#### AAG v3.0 (Typesafe Harness & Agentic Loop Architecture) 대규모 개정
+- **Harness Engineering (하네스 엔지니어링) 정립**:
+  - 모델에 종속되지 않는 격리된 샌드박스 실행 환경(Sandbox Isolation) 규정.
+  - 구문 트리(AST) 및 의존성 그래프 기반의 정밀 컨텍스트 슬라이싱(Context Slicing & Pruning) 표준화.
+  - 실행 실패 및 이상 발생 시 Git 기반 체크포인트 즉각 복구(`git reset --hard`) 메커니즘 명문화.
+- **Loop Engineering (루프 엔지니어링) 및 FSM 상태 머신 도입**:
+  - 무한 루프 방지를 위한 수렴 보장(Halting Guarantee) 및 서킷 브레이커 도입.
+  - 턴 한도(최대 5턴) 및 동일 에러 반복 탐지(Cycle Detection) 기반 조기 탈출 프로토콜 수립.
+  - Mermaid 기반 루프 엔지니어링 FSM 상태 전이 다이어그램 추가.
+- **Typesafe AI & Schema-First Protocol 명문화**:
+  - 비정형 자연어 프롬프팅 지양, Pydantic / Zod / JSON Schema / TOON 기반의 강력한 입출력 타입 계약 강제.
+  - 타입 불일치 시 LLM 재추론 없이 컴파일러/타입체커 에러 피드백을 통한 즉시 복구(Zero-shot Schema Repair) 체계 구축.
+- **경량 모델(SLM / Flash) 최적화 전략 수립**:
+  - Frontier LLM 의존도를 낮추고 Gemini Flash / Claude Haiku / 로컬 SLM 중심의 고속·저비용(90% 이상 절감) 아키텍처 제시.
+  - 모델 캐스케이딩(Model Cascading): 아키텍처 수립(Frontier) → 구현/변환(SLM) → 검증/판정(결정론적 하네스).
+- **Hybrid RAG & 2-Tier Judgment Theory (2단계 판정 이론)**:
+  - Dense Vector + Sparse BM25 + AST Code Graph 하이브리드 검색 채택.
+  - Tier-1(비용 $0, 100% 결정론적 기계 판정) 통과 시에만 Tier-2(의미론적 LLM-as-a-Judge)를 선별 적용하는 2단계 게이팅 체계 수립.
+- **시각화 인프라 강화**:
+  - `index.html` Docsify 내 Mermaid v10 렌더링 플러그인 장착.
+  - 엔드투엔드 파이프라인, 루프 FSM, 2단계 판정 게이트 3대 Mermaid 플로우차트 공식 문서 삽입.
+
+---
 
 ## v2.2 — 2026-08-28
 

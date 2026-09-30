@@ -20,14 +20,18 @@
 ---
 
 ## Core Focus (주요 과제)
-- **Design Stability**: Developing a robust architecture where the Orchestrator (Tram) and specialized Plugins work in harmony without losing context.
-- **Economic Sustainability**: Engineering prompts and data structures to minimize unnecessary token burn, making long-term AI operations sustainable.
+- **Harness & Loop Engineering**: Developing a robust architecture where the Orchestrator (Tram) and specialized Plugins execute within bounded FSM loops with circuit breakers and deterministic rollbacks.
+- **Typesafe AI & Schema-First**: Enforcing strict type contracts (Pydantic/Zod/TOON) to eliminate runtime hallucinations and enable zero-shot schema repairs.
+- **Lightweight Model Optimization**: Maximizing cost-efficiency (>90% savings) and sub-second latency by empowering lightweight models (SLM, Flash/Mini) through typed sandboxes.
+- **2-Tier Judgment Theory**: Implementing zero-cost deterministic validation (Tier-1) followed by selective semantic evaluation (Tier-2).
 
-- **설계 안정성**: 컨텍스트를 잃지 않고 오케스트레이터(트램)와 전문 플러그인이 조화롭게 작동하는 견고한 아키텍처를 개발합니다.
-- **경제적 지속 가능성**: 불필요한 토큰 소모를 최소화하도록 프롬프트와 데이터 구조를 설계하여, 장기적인 AI 운영이 가능하게 만듭니다.
+- **하네스 및 루프 엔지니어링**: 유한 상태 머신(FSM)과 서킷 브레이커, 결정론적 롤백을 통해 오케스트레이터(트램)와 플러그인이 안전하게 수렴하는 강건한 실행 환경을 구축합니다.
+- **타입 세이프 AI & 스키마 우선**: Pydantic/Zod/TOON 등 엄격한 타입 계약을 강제하여 런타임 환각을 원천 차단하고 즉각적인 스키마 자가 복구를 수행합니다.
+- **경량 모델 최적화**: 정밀한 컨텍스트 슬라이싱과 타입 제약을 통해 경량 모델(SLM, Flash/Mini)로도 90% 이상의 비용 절감과 초저지연 고속 자동화를 실현합니다.
+- **2단계 판정 체계**: 비용 $0의 기계적·결정론적 판정(Tier-1)과 선별적 의미론적 심사(Tier-2)를 결합하여 안정성과 경제성을 동시에 달성합니다.
 
 ---
 
 ## Documents
-- [AI Agent Governance & Architecture (v2.1)](./ai-agent-governance.md)
+- [AI Agent Governance & Architecture (v3.0)](./ai-agent-governance.md)
 - [Changelog](./CHANGELOG.md)
