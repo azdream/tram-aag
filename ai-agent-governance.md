@@ -100,9 +100,84 @@ flowchart TD
 
 ---
 
-## 4. 🌐 Semantic Ontology & Actionable Graph Architecture
+## 4. 🌐 Semantic Ontology & Knowledge Graph Architecture
 
-전통적인 검색 증강 생성(Naive RAG)은 텍스트를 단순히 청크(Chunk)로 쪼개어 유사도 순으로 던져줍니다. 하지만 복잡한 시스템에서 에이전트가 "진짜 작업"을 수행하려면, **엔티티 간의 관계, 불변식(Invariants), 실행 가능한 행위(Affordance)**를 완벽히 이해해야 합니다. Tram AAG는 **시맨틱 온톨로지(Semantic Ontology)**를 에이전트 지식 및 행동의 기준틀(Ground Truth)로 삼습니다.
+전통적인 검색 증강 생성(Naive RAG)은 텍스트를 단순히 청크(Chunk)로 쪼개어 유사도 순으로 던져줍니다. 하지만 복잡한 시스템에서 에이전트가 "진짜 작업"을 수행하려면, **도메인 지식(Domain Knowledge)**, **기술 라이브러리 및 SDK(RAG Corpus)**, 그리고 이들 사이의 **의미론적 연관관계(Semantic Linkage)**를 완벽히 이해해야 합니다.
+
+Tram AAG는 **시맨틱 온톨로지(Semantic Ontology)**를 도메인 의도와 기술적 구현 자산을 결속하는 핵심 브릿지이자 에이전트 행동의 기준틀(Ground Truth)로 삼습니다.
+
+---
+
+### 1️⃣ 지식의 3대 축과 온톨로지 넥서스 (The Knowledge Triad & Ontology Nexus)
+
+에이전트가 엔터프라이즈 환경에서 환각 없이 올바르게 기동하기 위해서는 상호 독립된 3가지 지식 자산이 온톨로지를 통해 결속되어야 합니다:
+
+```mermaid
+flowchart TB
+    subgraph Domain_Knowledge ["🏛️ 1. 도메인 지식 (Business Domain Knowledge)"]
+        BizConcept["개념 및 용어집 (Taxonomy)<br>예: '정기구독', 'VIP 회원', '미정산금'"]
+        BizRule["비즈니스 불변식 (Invariants)<br>예: 'VIP 수수료 면제', '재고>0', '연체 즉시 차단'"]
+        BizProcess["업무 프로세스 (SOP & Policy)<br>예: 환불 승인 단계, 결제 실패 재시도 정책"]
+    end
+    
+    subgraph Ontology_Nexus ["🌐 2. 시맨틱 온톨로지 연관관계 엔진 (Semantic Linkage Nexus)"]
+        direction TB
+        RelRealize["🔗 실체화 (Realizes / Implements)<br>도메인 개념 ➔ 기술 라이브러리 모듈 매핑"]
+        RelConstrain["🔒 제약 강제 (Constrains / Governs)<br>비즈니스 룰 ➔ 파라미터/미들웨어 강제"]
+        RelTranslate["🔤 스키마 변환 (Translates / Maps)<br>비즈니스 상태 ➔ DB/API 코드 값 변환"]
+        RelImpact["💥 영향 전파 (Impacts & Propagates)<br>라이브러리 변경 ➔ 도메인 영향도 추적"]
+        
+        RelRealize --- RelConstrain
+        RelConstrain --- RelTranslate
+        RelTranslate --- RelImpact
+    end
+    
+    subgraph Tech_Library ["📚 3. 기술 라이브러리 & RAG 지식 (Libraries & RAG Corpus)"]
+        SDK["공통/외부 SDK & 프레임워크<br>예: TossPayments SDK, Spring Security, Pydantic"]
+        APISpec["API 레퍼런스 & 스키마 (RAG)<br>예: OpenAPI/Swagger, 문서 청크, 엔드포인트"]
+        Runbooks["사내 위키 & 트러블슈팅 가이드<br>예: 장애 대응 매뉴얼, 버전별 마이그레이션"]
+    end
+    
+    Domain_Knowledge <===>|"도메인 맥락 바인딩"| Ontology_Nexus
+    Ontology_Nexus <===>|"기술 명세 및 호출 바인딩"| Tech_Library
+    
+    subgraph Execution_Runtime ["🤖 에이전트 런타임 실행 (Typesafe Execution)"]
+        GroundedContext["🎯 온톨로지 접지 컨텍스트 (Grounded Context)<br>도메인 규칙 + 라이브러리 명세 일체화"]
+        AgentCode["📦 안전한 코드 생성 및 도구 호출<br>Zero-Hallucination 실체화"]
+    end
+    
+    Ontology_Nexus ==>|"서브그래프 인출"| GroundedContext
+    GroundedContext --> AgentCode
+```
+
+1. **🏛️ 도메인 지식 (Business Domain Knowledge - "WHAT & WHY"):**
+   - 회사의 비즈니스 룰, 도메인 불변식(Invariants), 사내 고유 용어집(Taxonomy/Glossary), 업무 절차(SOP).
+   - "누가, 언제, 어떤 조건에서 이 데이터를 조작할 수 있는가?"를 정의합니다.
+2. **📚 기술 라이브러리 & RAG 지식 (Libraries & Tech Corpus - "HOW & TOOLS"):**
+   - 사내/오픈소스 SDK, 기술 프레임워크(Spring, FastAPI, React 등), API 명세서, 트러블슈팅 런북.
+   - RAG 벡터 및 키워드로 인덱싱된 "실제 구동 가능한 기술적 도구들의 집합"입니다.
+3. **🌐 시맨틱 온톨로지 연관관계 (Semantic Linkage - "THE BRIDGE"):**
+   - **Naive RAG가 실패하는 근본 원인:** "도메인 맥락 없는 라이브러리 RAG 검색"은 엉뚱한 파라미터 호출을 낳고, "기술 라이브러리 바인딩 없는 도메인 지식"은 실행 불가능한 자연어 환각만 낳습니다.
+   - **온톨로지의 역할:** 도메인 개념과 기술 라이브러리 API, 데이터베이스 스키마 간의 **"의미론적 연관관계(Semantic Linkage)"를 명시적 유향 그래프로 바인딩**합니다.
+
+---
+
+### 2️⃣ 온톨로지 핵심 연관관계 (Semantic Relationship) 4대 유형
+
+온톨로지는 도메인 지식과 기술 라이브러리를 연결하기 위해 다음 4가지 핵심 엣지(Edge) 관계를 유지합니다:
+
+| 연관관계 유형 | 의미 및 메커니즘 | 실제 적용 예시 |
+| :--- | :--- | :--- |
+| **1. 실체화 (Realizes / Implements)** | 추상적인 비즈니스 개념/행위가 특정 기술 라이브러리의 클래스/함수/API로 어떻게 구현되는지 연결 | 도메인 개념 `정기결제(SubscriptionBilling)` ──[Realizes]──► 라이브러리 `TossPaymentsSDK.requestBillingAuth()` |
+| **2. 제약 강제 (Constrains / Governs)** | 비즈니스 불변식(Invariants)이 라이브러리의 어떤 파라미터나 보안 미들웨어로 강제되어야 하는지 정의 | 도메인 룰 `중복결제 차단` ──[Constrains]──► 라이브러리 헤더 `Idempotency-Key` 및 `RedisDistributedLock` 강제 |
+| **3. 스키마 변환 (Translates / Maps)** | 비즈니스 상태/용어와 라이브러리/데이터베이스의 물리적 코드 값 사이의 양방향 매핑 규정 | 비즈니스 개념 `활성 구독 상태` ──[Translates]──► DB 칼럼 `sub_status == '01'` & `expires_at > NOW()` |
+| **4. 영향 전파 (Impacts & Propagates)** | 외부 라이브러리 버전 업그레이드나 도메인 정책 변경 시 영향받는 상/하위 컴포넌트 자동 추적 | `Stripe SDK v12 ➔ v13 업데이트` ──[Impacts]──► 도메인 엔티티 `PaymentMethod`의 토큰화 암호화 규약 변경 추적 |
+
+---
+
+### 3️⃣ OPLA: 온톨로지 4대 런타임 구성 요소
+
+온톨로지 엔진은 도메인 지식과 라이브러리를 바탕으로 엔터프라이즈 환경을 4가지 실행 단위(OPLA)로 인덱싱합니다:
 
 ```mermaid
 flowchart TD
@@ -140,25 +215,30 @@ flowchart TD
     end
 ```
 
-### 1️⃣ OPLA: 온톨로지 4대 핵심 구성 요소
-온톨로지는 엔터프라이즈 환경을 다음 4가지 핵심 요소로 정형화합니다:
+* **Objects (객체/엔티티):** 실재하는 고유 식별 비즈니스/기술 단위 (`DatabaseTable`, `MicroService`, `BillingAccount`, `PullRequest`).
+* **Properties (속성/상태):** 객체의 정적 메타데이터, 동적 런타임 상태 및 타입 제약 (`status: "ACTIVE"`, `schema_version: 3`).
+* **Links (의미론적 연결):** 객체 간의 종속성, 상속, 인과 관계를 나타내는 유향 엣지 (`ServiceA --(Calls)--> ServiceB`).
+* **Actions (실행 권능/Affordances):** 특정 객체에 대해 에이전트가 호출할 수 있는 타입화된 도구 (`User.refund()`, `Service.restart()`).
 
-| 요소 | 정의 및 역할 | 예시 |
-| :--- | :--- | :--- |
-| **Objects (객체/엔티티)** | 시스템 내에서 실재하는 고유 식별 비즈니스/기술 단위 | `DatabaseTable`, `MicroService`, `BillingAccount`, `PullRequest` |
-| **Properties (속성/상태)** | 객체가 가지는 정적 메타데이터, 동적 런타임 상태 및 타입 제약 | `status: "ACTIVE"`, `schema_version: 3`, `max_concurrency: 50` |
-| **Links (의미론적 연결)** | 객체 간의 종속성, 상속, 인과 관계를 나타내는 유향 엣지 | `ServiceA --(Calls)--> ServiceB`, `TableX --(BelongsTo)--> DomainY` |
-| **Actions (실행 권능/Affordances)** | 특정 객체에 대해 에이전트가 호출할 수 있는 타입화된 도구(Tool) | `User.refund()`, `Service.restart()`, `Schema.migrate()` |
+---
 
-### 2️⃣ 온톨로지 기반 지식 접지 (Ontology Grounding) vs Naive RAG
+### 4️⃣ 온톨로지 지식 접지 (Ontology Grounding) vs Naive RAG
+
 * **관계적 일관성 보장:** Naive RAG는 텍스트 유사도만 보므로 A서비스와 B서비스의 의존 순서를 뒤바꿀 수 있습니다. 온톨로지는 그래프 탐색(Graph Traversal)을 통해 `DependsOn` 방향성을 100% 보장합니다.
 * **불변식(Business Invariants) 강제:** "결제 취소는 주문 상태가 PENDING_PAYMENT 또는 COMPLETED일 때만 가능하다"와 같은 비즈니스 규칙이 온톨로지 링크/제약조건으로 사전 선언되어 있어 에이전트의 불법 상태 전이를 차단합니다.
+* **라이브러리 정확도 보장:** 도메인 의도와 연계된 정확한 SDK 명세만 선별 인출되므로, 버전 불일치나 deprecated된 라이브러리 API 호출을 방지합니다.
 
-### 3️⃣ 온톨로지 서브그래프 슬라이싱 & 경량 모델(SLM) 연계
-* 에이전트에게 전체 온톨로지를 주지 않습니다. 에이전트가 처리할 작업과 직접 연관된 **1~2홉(Hop) 반경의 서브그래프(Subgraph)**만 추출하여 전달합니다.
-* 이 경량화된 그래프 스냅샷은 4KB 미만의 토큰만 차지하면서도 완벽한 문맥을 제공하므로, **경량 모델(SLM/Flash)이 복잡한 엔터프라이즈 추론에서도 환각 없이 작업을 완수**할 수 있습니다.
+---
 
-### 4️⃣ 온톨로지 기반 객체 수준 보안 및 권한 통제 (Object-Level RBAC/ABAC)
+### 5️⃣ 온톨로지 서브그래프 슬라이싱 & 경량 모델(SLM) 연계
+
+* 에이전트에게 전체 온톨로지를 주지 않습니다. 에이전트가 처리할 작업과 직접 연관된 **1~2홉(Hop) 반경의 도메인-라이브러리 서브그래프(Subgraph)**만 추출하여 전달합니다.
+* 이 경량화된 그래프 스냅샷은 4KB 미만의 토큰만 차지하면서도 도메인 규칙과 라이브러리 명세를 일체화하여 제공하므로, **경량 모델(SLM/Flash)이 복잡한 엔터프라이즈 추론에서도 환각 없이 작업을 완수**할 수 있습니다.
+
+---
+
+### 6️⃣ 온톨로지 기반 객체 수준 보안 및 권한 통제 (Object-Level RBAC/ABAC)
+
 * 단순 API 키나 파일 권한을 넘어, **"어떤 에이전트가 어떤 온톨로지 객체(Object)에 대해 어떤 액션(Action)을 트리거할 수 있는가"**를 온톨로지 레이어에서 중앙 통제합니다.
 * 예: `Dev Agent`는 `Service.restart()` 액션 권한이 있지만, `BillingAccount.charge()` 액션 권한은 온톨로지 보안 정책에 의해 원천 차단됩니다.
 
