@@ -43,6 +43,12 @@
 - **시각화 인프라 강화**:
   - `index.html` Docsify 내 Mermaid v10 렌더링 플러그인 장착.
   - 엔드투엔드 파이프라인, 루프 FSM, 2단계 판정 게이트 3대 Mermaid 플로우차트 공식 문서 삽입.
+- **Enterprise Commercialization & Trust Architecture (상용화 및 신뢰 아키텍처) 추가**:
+  - B2B 상용화를 위한 4대 신뢰 아키텍처 강제.
+  - **Audit Trail (감사 로그):** TypeSafe 의사결정 추적, 불변 로그 보관 및 PII 데이터 마스킹.
+  - **Cost Optimization (비용 최적화):** 서브태스크별 Token Budgeting, System 1을 활용한 Zero-Cost 라우팅으로 인프라 비용 절감.
+  - **Explainable UX (설명 가능한 UX):** 에이전트 결정을 시각화하는 Glass-box UX, Human-in-the-Loop 개입 시 Context-Rich 요약 카드 제공.
+  - **SLA & Monitoring:** 응답 지연 보장(Latency SLA) 및 에이전트 성공률 분 단위 모니터링 체계 도입.
 
 ---
 
