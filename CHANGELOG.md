@@ -1,5 +1,22 @@
 # AAG Changelog
  
+## v3.1 — 2026-09-30
+
+### 리뷰어: Antigravity (agy)
+### 승인: Chris
+
+### 변경 내용
+
+#### AAG v3.1 (Enterprise Commercialization & Trust Architecture) 릴리즈
+- **Enterprise Commercialization & Trust Architecture (상용화 및 신뢰 아키텍처) 추가**:
+  - B2B 상용화를 위한 4대 신뢰 아키텍처 강제.
+  - **Audit Trail (감사 로그):** TypeSafe 의사결정 추적, 불변 로그 보관 및 PII 데이터 마스킹.
+  - **Cost Optimization (비용 최적화):** 서브태스크별 Token Budgeting, System 1을 활용한 Zero-Cost 라우팅으로 인프라 비용 절감.
+  - **Explainable UX (설명 가능한 UX):** 에이전트 결정을 시각화하는 Glass-box UX, Human-in-the-Loop 개입 시 Context-Rich 요약 카드 제공.
+  - **SLA & Monitoring:** 응답 지연 보장(Latency SLA) 및 에이전트 성공률 분 단위 모니터링 체계 도입.
+
+---
+
 ## v3.0 — 2026-09-30
 
 ### 리뷰어: Antigravity (agy)
@@ -43,12 +60,6 @@
 - **시각화 인프라 강화**:
   - `index.html` Docsify 내 Mermaid v10 렌더링 플러그인 장착.
   - 엔드투엔드 파이프라인, 루프 FSM, 2단계 판정 게이트 3대 Mermaid 플로우차트 공식 문서 삽입.
-- **Enterprise Commercialization & Trust Architecture (상용화 및 신뢰 아키텍처) 추가**:
-  - B2B 상용화를 위한 4대 신뢰 아키텍처 강제.
-  - **Audit Trail (감사 로그):** TypeSafe 의사결정 추적, 불변 로그 보관 및 PII 데이터 마스킹.
-  - **Cost Optimization (비용 최적화):** 서브태스크별 Token Budgeting, System 1을 활용한 Zero-Cost 라우팅으로 인프라 비용 절감.
-  - **Explainable UX (설명 가능한 UX):** 에이전트 결정을 시각화하는 Glass-box UX, Human-in-the-Loop 개입 시 Context-Rich 요약 카드 제공.
-  - **SLA & Monitoring:** 응답 지연 보장(Latency SLA) 및 에이전트 성공률 분 단위 모니터링 체계 도입.
 
 ---
 
@@ -59,7 +70,7 @@
 
 ### 변경 내용
 
-#### AAG v2.0 (Harness Architecture) 보완 개정
+#### AAG v2.2 (Harness Architecture) 보완 개정
 - **Contract-First & Deterministic Verification 명문화**: APEI 각 단계에 입력/출력 스키마 명세 및 단일 검증 명령어(`verification_command`) 강제.
 - **수정 범위 격리 (Scope Boundaries)**: AI가 임의로 전역 설정/프로젝트 환경을 수정하지 못하도록 `Allowed Scope`와 `Forbidden Scope` 규칙 규정.
 - **APEI-H Protocol 구체화**:

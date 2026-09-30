@@ -1,15 +1,15 @@
-# 🛡️ AI Agent Governance & Harness Architecture (AAG v3.0)
+# 🛡️ AI Agent Governance & Harness Architecture (AAG v3.1)
 
 > **"Autonomous Execution, Typesafe Contract, Semantic Ontology, Loop Engineering, Lightweight Model Optimization"**  
 > 본 규정은 프로젝트 내 모든 AI 에이전트, 시맨틱 온톨로지(Ontology), 오케스트레이션 하네스(Harness), 런타임 제어 루프의 개발·운영 표준을 정의합니다.
 >
-> 📅 **Last Updated:** 2026-09-30 (v3.0 Typesafe & Semantic Ontology Edition)
+> 📅 **Last Updated:** 2026-09-30 (v3.1 Enterprise Commercialization Edition)
 
 ---
 
-### 💡 v3.0 핵심 아키텍처 패러다임 전환
+### 💡 v3.1 핵심 아키텍처 패러다임 전환
 
-기존 AI 에이전트 시스템이 초거대 언어 모델(Frontier LLM)의 자체 추론력과 비정형 자연어 프롬프트에 과도하게 의존했다면, **AAG v3.0**은 다음 **6대 엔지니어링 원칙**을 기반으로 안정적이고 경제적인 엔터프라이즈 자동화를 구현합니다:
+기존 AI 에이전트 시스템이 초거대 언어 모델(Frontier LLM)의 자체 추론력과 비정형 자연어 프롬프트에 과도하게 의존했다면, **AAG v3.1**은 다음 **7대 엔지니어링 원칙**을 기반으로 안정적이고 경제적인 엔터프라이즈 자동화를 구현합니다:
 
 1. **하네스 엔지니어링 (Harness Engineering):** *"Model is a commodity, Harness is the moat."* 모델 자체보다 에이전트를 둘러싼 실행 환경(샌드박스, 컨텍스트 슬라이싱, 상태 체크포인트, 결정론적 롤백)을 우선적으로 엔지니어링합니다.
 2. **시맨틱 온톨로지 (Semantic Ontology & Actionable Graph):** 비정형 텍스트 청크나 파편화된 RAG를 넘어, 시스템의 객체(Object), 속성(Property), 관계(Link), 실행 가능한 행위(Action/Affordance)를 지식 그래프 온톨로지로 통합하여 에이전트의 지식 접지(Grounding)와 권한 통제를 완성합니다.
@@ -83,7 +83,7 @@ flowchart TD
 
 자연어 프롬프트는 확률적(Probabilistic)이며 모호합니다. 프로덕션 레벨의 에이전트는 입출력 경계가 반드시 **결정론적 타입(Deterministic Type)**과 **보정된 의사결정 프리미티브(Calibrated Decision Primitives)**로 고정되어야 합니다.
 
-AAG v3.0은 최신 **TypeSafe AI (System One Architecture)** 패러다임을 전면 도입하여, 텍스트 생성 중심의 초거대 언어 모델(System 2 LLM)과 초고속 비자기회귀 의사결정 모델(System 1 Jev)을 결합한 하이브리드 타입 안전 아키텍처를 표준으로 채택합니다.
+AAG v3.1은 최신 **TypeSafe AI (System One Architecture)** 패러다임을 전면 도입하여, 텍스트 생성 중심의 초거대 언어 모델(System 2 LLM)과 초고속 비자기회귀 의사결정 모델(System 1 Jev)을 결합한 하이브리드 타입 안전 아키텍처를 표준으로 채택합니다.
 
 ```text
 [입력 State & 온톨로지] ──► [System 1 (TypeSafe Jev): Noul/Choice/Score] ──► [결정론적 라우팅/가드레일] ──► [System 2 (LLM): Typesafe Code Gen] ──► [컴파일 타임 검증]
@@ -320,7 +320,7 @@ if (result.can_refund.value && result.fraud_risk.score < 2.0) {
 
 ### 5️⃣ 핵심 타입 카탈로그 (Core Type System Catalog)
 
-AAG v3.0 하네스에서 에이전트 런타임이 운용하는 5대 표준 타입 정의입니다:
+AAG v3.1 하네스에서 에이전트 런타임이 운용하는 5대 표준 타입 정의입니다:
 
 #### 1. `AgentResponseEnvelope<T>` (최상위 표준 응답 봉투)
 ```typescript
@@ -644,9 +644,9 @@ stateDiagram-v2
 
 ## 6. ⚡ Lightweight Model (SLM/Flash) Optimization
 
-대규모 엔터프라이즈 환경에서 모든 태스크에 초거대 모델(Frontier LLM)을 사용하는 것은 비용과 지연시간 측면에서 비효율적입니다. **AAG v3.0은 경량 모델(SLM, Flash/Mini)을 1급 시민으로 최적화**합니다.
+대규모 엔터프라이즈 환경에서 모든 태스크에 초거대 모델(Frontier LLM)을 사용하는 것은 비용과 지연시간 측면에서 비효율적입니다. **AAG v3.1은 경량 모델(SLM, Flash/Mini)을 1급 시민으로 최적화**합니다.
 
-| 비교 항목 | 기존: Frontier LLM 중심 접근 | AAG v3.0: 온톨로지 하네스 + 경량 모델 |
+| 비교 항목 | 기존: Frontier LLM 중심 접근 | AAG v3.1: 온톨로지 하네스 + 경량 모델 |
 | :--- | :--- | :--- |
 | **주요 사용 모델** | GPT-4o, Claude 3.5 Sonnet, Gemini Pro | **Gemini Flash, Claude Haiku, Llama-3-8B / 로컬 SLM** |
 | **비용 (Cost)** | 고비용 ($3.00 ~ $15.00 / 1M 토큰) | **초저비용 ($0.075 ~ $0.50 / 1M 토큰, 90% 이상 절감)** |
@@ -816,7 +816,7 @@ TASK-02,"src/auth/router.py","pytest tests/test_router.py",pending
 
 ## 13. 🏢 Enterprise Commercialization & Trust Architecture (상용화 및 신뢰 아키텍처)
 
-엔터프라이즈 B2B 시장에서 AI 에이전트가 성공적으로 상용화되기 위해서는 '단순히 동작하는 것'을 넘어 **보안(Security), 비용 통제(Cost Control), 설명 가능성(Explainability), 그리고 신뢰(Trust)**를 보장해야 합니다. AAG v3.0은 상용 서비스를 위한 4대 신뢰 아키텍처를 강제합니다.
+엔터프라이즈 B2B 시장에서 AI 에이전트가 성공적으로 상용화되기 위해서는 '단순히 동작하는 것'을 넘어 **보안(Security), 비용 통제(Cost Control), 설명 가능성(Explainability), 그리고 신뢰(Trust)**를 보장해야 합니다. AAG v3.1은 상용 서비스를 위한 4대 신뢰 아키텍처를 강제합니다.
 
 ### 1️⃣ Audit Trail & Compliance (감사 로그 및 규제 준수)
 * **결정론적 의사결정 추적:** TypeSafe AI(System 1)가 내린 Noul, Choice, Score의 모든 확률값(Confidence Score)과 선택 근거는 `trace_id` 단위로 불변(Immutable) 감사 로그에 기록됩니다.
