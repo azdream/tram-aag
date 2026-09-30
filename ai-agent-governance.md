@@ -80,23 +80,373 @@ flowchart TD
 
 ## 3. 🧬 Typesafe AI & Schema-First Protocol
 
-자연어 프롬프트는 확률적(Probabilistic)이며 모호합니다. 프로덕션 레벨의 에이전트는 입출력 경계가 반드시 **결정론적 타입(Deterministic Type)**으로 고정되어야 합니다.
+자연어 프롬프트는 확률적(Probabilistic)이며 모호합니다. 프로덕션 레벨의 에이전트는 입출력 경계가 반드시 **결정론적 타입(Deterministic Type)**과 **보정된 의사결정 프리미티브(Calibrated Decision Primitives)**로 고정되어야 합니다.
+
+AAG v3.0은 최신 **TypeSafe AI (System One Architecture)** 패러다임을 전면 도입하여, 텍스트 생성 중심의 초거대 언어 모델(System 2 LLM)과 초고속 비자기회귀 의사결정 모델(System 1 Jev)을 결합한 하이브리드 타입 안전 아키텍처를 표준으로 채택합니다.
 
 ```text
-[자연어 입력] ──► [타입 스키마 강제 (Pydantic/Zod/TOON)] ──► [결정론적 도구 호출] ──► [컴파일 타임 검증]
+[입력 State & 온톨로지] ──► [System 1 (TypeSafe Jev): Noul/Choice/Score] ──► [결정론적 라우팅/가드레일] ──► [System 2 (LLM): Typesafe Code Gen] ──► [컴파일 타임 검증]
 ```
 
-### 1️⃣ Contract-First 원칙
-* 모든 에이전트 간 통신, 도구(Tool) 호출 파라미터, 산출물 반환값은 사전에 정의된 **엄격한 스키마(Schema)**를 따릅니다.
-* 에이전트에게 전달되는 지침은 모호한 장문 텍스트보다 **TypeScript 인터페이스 / Python Pydantic 모델 / JSON Schema** 형태로 제공될 때 환각률이 90% 이상 감소합니다.
+---
 
-### 2️⃣ Structured Output & Tool Calling 강제
-* 모델이 자유로운 서술형 텍스트를 출력하는 것을 금지하며, 시스템 레벨에서 `json_schema` 또는 `TOON` 구조화 출력을 강제합니다.
-* 파서(Parser)가 모델 출력을 파싱하지 못하거나 필드 타입이 불일치할 경우, LLM에게 전체 컨텍스트를 다시 묻지 않고 **타입 검증 에러(Type Validation Error) 스니펫만 주입하여 1턴 내에 즉각 복구(Zero-shot Schema Repair)**합니다.
+### 1️⃣ Typesafe AI의 3대 본질: 당위성·속도·동시 설계
 
-### 3️⃣ 컴파일러/타입체커 기반 Self-Healing
-* 코드 생성 시 "사람이 읽고 검토"하는 방식 대신, 언어별 정적 타입 분석기(`tsc`, `mypy`, `pyright`, `cargo check`)의 결과를 루프에 피드백으로 주입합니다.
-* **원칙:** *"If it compiles and passes schema, it operates."*
+```mermaid
+flowchart TB
+    subgraph System_Comparison ["🧠 System 1 (TypeSafe AI) vs System 2 (Frontier LLM)"]
+        direction LR
+        S1["⚡ System 1 (TypeSafe AI / Jev)<br>• Non-Autoregressive 병렬 샘플링<br>• Latency: 2ms ~ 70ms<br>• Output: Noul / Choice / Score<br>• 목적: 초고속 정량적 판단·라우팅·가드레일"]
+        S2["🤔 System 2 (Frontier LLM / SLM)<br>• Autoregressive 순차 토큰 생성<br>• Latency: 1초 ~ 15초<br>• Output: 코드, 문서, 다단계 플랜<br>• 목적: 복합 추론, 생성, 아키텍처 수립"]
+    end
+
+    subgraph Architecture_Trio ["🛡️ Typesafe AI의 3대 핵심 기둥"]
+        direction LR
+        W1["❓ 왜 필요한가?<br>(Why Needed)<br>• 임피던스 불일치 해소<br>• 0/1 결정론적 제어 흐름<br>• 환각 99% 차단"]
+        W2["⚡ 왜 빠른가?<br>(Why Fast)<br>• Non-Autoregressive 단일 패스<br>• 생성 토큰 0개 (No Prose)<br>• $0 Retry 오버헤드"]
+        W3["🤝 왜 LLM과 동시 설계인가?<br>(Why Co-Designed)<br>• System 1 + System 2 상호보완<br>• 어텐션 탐색 공간 축소<br>• 외과수술적 Zero-shot Repair"]
+    end
+
+    System_Comparison ==> Architecture_Trio
+    Architecture_Trio ==> Production["🚀 고신뢰·초저지연 엔터프라이즈 에이전트 런타임"]
+```
+
+#### 💡 (1) 왜 필요한가? (The Inevitability of Typesafety)
+1. **확률적 모델(LLM)과 결정론적 시스템(Runtime)의 임피던스 불일치 해소:**
+   * LLM은 본질적으로 다음 토큰의 확률을 계산하는 통계적 언어 모델입니다. 그러나 OS, 데이터베이스, API, 런타임 환경은 `단 1비트의 타입 불일치`도 용납하지 않는 엄격한 결정론적 세계입니다.
+   * 타입 안전성 없는 자연어 지시는 **포맷 드리프트(Format Drift)**, **필드 누락(Silent Drop)**, **유형 왜곡(Type Mismatch, e.g., 숫자 ID가 string으로 인출되어 연산 실패)**을 유발하여 시스템 장애로 직결됩니다.
+2. **환각(Hallucination)의 원천 차단:**
+   * 에이전트가 존재하지 않는 API 파라미터나 불가능한 상태 값을 지어내는 현상은 타입 스키마(Enum, Literal, Range Constraint)와 TypeSafe 의사결정 프리미티브로 경계를 묶을 때 99% 이상 소멸합니다.
+3. **계약 우선주의 (Contract-First Architecture):**
+   * 에이전트 간 협업(Multi-Agent Swarm)이나 도구 호출 시, 자연어 지침 대신 엄격한 스키마 인터페이스를 계약(Contract)으로 체결하여 시스템 결합도를 낮추고 모듈화된 기계적 검증을 가능하게 합니다.
+
+#### ⚡ (2) 왜 빠른가? (The Extreme Velocity of Typesafe Inference)
+Typesafe AI는 '안전성'뿐만 아니라 **기존 자연어 프롬프트 기반 에이전트 대비 10~100배 이상의 압도적 속도와 비용 절감**을 제공합니다:
+
+1. **Non-Autoregressive 단일 포워드 패스 (Sub-50ms 의사결정):**
+   * TypeSafe AI(Jev 모델 등)는 단어를 한 글자씩 이어붙이는 순차적 토큰 디코딩 루프(Autoregressive Decoding)를 완전히 배제합니다.
+   * 입력 상태(State)와 질문(Question)에 대해 **단 1회의 신경망 포워드 패스로 사전 정의된 분류/회귀 헤드에서 확률 벡터를 병렬 인출**하므로, 로컬 2~10ms, 클라우드 API 기준 70~300ms 만에 응답을 반환합니다.
+2. **잡담 토큰(Chatter/CoT Overhead) 제로 & 출력 토큰 비용 $0:**
+   * 일반 LLM은 *"네, 요청하신 작업을 분석한 결과..."* 와 같은 장황한 서술(Chatter)을 생성하느라 수백 개의 토큰과 시간을 낭비합니다.
+   * TypeSafe AI는 서술 텍스트를 일절 출력하지 않고 순수 정량값(0.0~1.0 확률, 인덱스, 점수)만 반환하므로, **생성 토큰 수가 0개이며 출력 토큰 비용이 발생하지 않습니다.**
+3. **제약 디코딩 (Constrained Decoding & Logit Masking) 결합:**
+   * LLM이 코드를 생성할 때도 스키마를 정규 문법(CFG)으로 변환하여 유효하지 않은 토큰의 로짓을 `-inf`로 마스킹하므로, 무효한 분기 탐색이 차단되어 디코딩 속도가 극대화됩니다.
+4. **파싱 실패 재시도 오버헤드 제로 ($0 Retry Penalty):**
+   * 정규식 파싱 오류나 마크다운 코드 블록 깨짐으로 인한 LLM 재호출 페널티가 원천 차단됩니다.
+
+#### 🤝 (3) 왜 LLM과 함께 설계(Co-Design)되어야 하는가? (System 1 + System 2)
+타입 시스템을 단순한 사후 유효성 검사기(Post-Validator)로만 두면 안 됩니다. **System 1(TypeSafe 결정 엔진)과 System 2(Frontier LLM)는 하네스 안에서 유기적으로 결합**되어야 합니다:
+
+1. **어텐션 탐색 공간 축소 (Search Space Pruning):**
+   * LLM의 어텐션 메커니즘은 프롬프트의 방대한 어휘 사전을 탐색합니다. 앞단에서 TypeSafe 결정 프리미티브가 도메인 의도와 타깃 온톨로지 객체를 확정해주면, LLM은 **수천 가지 가능성이 아니라 이미 좁혀진 특정 인터페이스와 코드 블록에만 어텐션을 집중**할 수 있습니다.
+2. **외과수술적 자가 복구 (Zero-shot Surgical Repair):**
+   * 코드 생성 결과에서 타입 위반이 발생하더라도, 전체 맥락을 처음부터 다시 생성하지 않습니다.
+   * `Pydantic`/`Zod`의 정밀한 에러 위치(`loc: ["payload", "exit_code"]`, `expected: integer`, `received: string "0"`)만 모델에 피드백으로 주입하여, **1턴(단 0.5초) 만에 잘못된 필드만 외과수술적으로 교정**합니다.
+3. **기계와 지능의 분업 (Harness Co-design):**
+   * **System 1 (TypeSafe AI):** "이 요청이 보안 정책을 위반하는가?(Noul)", "어느 플러그인으로 라우팅할 것인가?(Choice)", "현재 코드 품질 점수는?(Score)" 등 매 턴마다 발생하는 수많은 조건 분기를 초고속·저비용으로 판정.
+   * **System 2 (LLM):** System 1의 판정을 통과한 핵심 로직에 대해서만 실제 코드 작성 및 복합 아키텍처 추론을 전담.
+   * 이를 통해 전체 에이전트 시스템의 **지연시간은 80% 단축되고, 토큰 비용은 90% 이상 절감**됩니다.
+
+---
+
+### 2️⃣ TypeSafe AI 3대 의사결정 프리미티브 (Decision Primitives: Noul, Choice, Score)
+
+TypeSafe AI(Jev 모델)는 소프트웨어가 조건문(`if/else`), 분기문(`switch`), 가드레일, 정책 게이트에 직접 꽂아 쓸 수 있는 **3대 원자적 의사결정 프리미티브**를 제공합니다:
+
+```mermaid
+flowchart LR
+    State["📦 Input State<br>(Context, Diff, Code, Logs)"] --> Engine["⚡ TypeSafe AI (System One Engine)"]
+    
+    Engine --> Noul["⚖️ Noul (진위 판정)<br>• Yes/No 확률 (0.0 ~ 1.0)<br>• 가드레일, 종료 여부, 위험 감지"]
+    Engine --> Choice["🎯 Choice (다중 분류)<br>• 사전 정의된 선택지 (최대 255개)<br>• 라우팅, 에이전트 위임, 상태 전이"]
+    Engine --> Score["📊 Score (연속 척도)<br>• 순서화된 루브릭 척도 (2~10단계)<br>• 품질 평가, 보안 위험도, 신뢰도"]
+
+    Noul --> FlowControl["🔀 Deterministic Control Flow (If / Else / Switch / Circuit Breaker)"]
+    Choice --> FlowControl
+    Score --> FlowControl
+```
+
+#### 1. `Noul` (진위 판정 / Boolean Probability Primitive)
+* **정의:** 특정 명제(Proposition)나 조건이 **참(True)일 확률을 0.0 ~ 1.0의 통계적으로 보정된 확률값(Calibrated Probability)**으로 반환하는 이진 판정 프리미티브입니다.
+* **주요 용도:**
+  - **보안/정책 가드레일:** `"이 코드가 프로덕션 DB 삭제 명령을 포함하는가?"`
+  - **루프 조기 종료 판단:** `"현재 테스트 결과가 요구사항을 완벽히 충족하는가?"`
+  - **인간 개입 트리거 (Escalation):** `"이 변경사항이 관리자 승인을 필요로 하는가?"`
+* **반환 구조:**
+  ```json
+  {
+    "urgent": {
+      "value": true,
+      "probability": 0.942,
+      "confidence": 0.915
+    }
+  }
+  ```
+
+#### 2. `Choice` (범주 선택 / Categorical Classification Primitive)
+* **정의:** 사전 정의된 선택지 세트(최대 255개) 중 주어진 상태에 **가장 부합하는 옵션 하나를 선택하고 각 후보별 확률 분포(Probability Distribution)를 제공**하는 다중 분류 프리미티브입니다.
+* **주요 용도:**
+  - **인텐트 기반 에이전트 라우팅:** `{"dev": "코드 수정", "security": "권한 심사", "data": "온톨로지 쿼리"}`
+  - **FSM 상태 전이 제어:** `{"PROCEED_TO_EVAL": "테스트 통과", "REQUEST_RETRY": "재시도", "TRIGGER_ROLLBACK": "실패 롤백"}`
+  - **도구/API 선택:** 실행할 하네스 액션 결정
+* **반환 구조:**
+  ```json
+  {
+    "route": {
+      "chosen": "dev",
+      "probabilities": {
+        "dev": 0.884,
+        "security": 0.091,
+        "data": 0.025
+      },
+      "confidence": 0.852
+    }
+  }
+  ```
+
+#### 3. `Score` (순서화 척도 평가 / Continuous Rubric Primitive)
+* **정의:** 2단계부터 10단계까지 정의된 순서화된 루브릭(Rubric)에 따라 **대상의 품질, 심각도, 적합성을 연속형 점수로 평가**하는 정량 척도 프리미티브입니다.
+* **주요 용도:**
+  - **Tier-2 코드 품질 심사:** 1단계(불량)부터 5단계(완벽)까지의 코드 안정성 점수
+  - **보안 취약점 심각도 (CVSS 유사 척도):** 1(안전) ~ 10(치명적 익스플로잇)
+  - **온톨로지 지식 적합도 (Grounding Score):** 도메인 지식 부합도 정량화
+* **반환 구조:**
+  ```json
+  {
+    "code_quality": {
+      "score": 4.62,
+      "levels": 5,
+      "distribution": [0.01, 0.02, 0.05, 0.22, 0.70],
+      "confidence": 0.890
+    }
+  }
+  ```
+
+---
+
+### 3️⃣ TypeSafe AI 공식 SDK 연동 예시
+
+TypeSafe AI는 Python 및 TypeScript 공식 SDK를 통해 상태(State)와 질문(Questions)을 전달받아 즉시 결정론적 응답을 인출합니다:
+
+#### 🐍 Python SDK (`typesafe-sdk`)
+```python
+from typesafe_sdk import TypeSafeClient, Noul, Choice, Score
+
+client = TypeSafeClient()
+
+# 1. 검증할 상태 데이터 (코드 변경 및 테스트 로그)
+state_payload = {
+    "task_id": "TASK-03",
+    "diff": "- old_auth()\n+ new_jwt_auth()",
+    "test_exit_code": 0,
+    "changed_files": ["src/auth/jwt.py"]
+}
+
+# 2. TypeSafe AI 프리미티브 질의 (Noul, Choice, Score 동시 평가)
+decisions = client.system_one(
+    state=state_payload,
+    questions={
+        # Noul: 보안 위험 탐지 (가드레일)
+        "is_safe": Noul(instructions="이 변경사항이 보안 취약점이나 비밀키 유출을 유발하지 않는가?"),
+        
+        # Choice: 다음 FSM 상태 전이 라우팅
+        "next_action": Choice(
+            instructions="테스트 결과와 변경 범위를 고려할 때 다음 하네스 조치는?",
+            criteria={
+                "auto_commit": "테스트 통과 및 안전 검증 완료",
+                "retest": "추가 단위 테스트 필요",
+                "human_review": "보안 위험으로 관리자 승인 필요"
+            }
+        ),
+        
+        # Score: 5단계 코드 품질 심사
+        "code_stability": Score(
+            instructions="코드 변경의 안정성 및 컨벤션 준수도를 1(취약)부터 5(견고)까지 평가하라",
+            levels=5
+        )
+    }
+)
+
+# 3. 결정론적 제어 흐름 (Control Flow) 실행
+if not decisions["is_safe"].value or decisions["is_safe"].probability < 0.90:
+    print(f"🚨 보안 가드레일 경고: 신뢰도 {decisions['is_safe'].confidence}")
+elif decisions["next_action"].chosen == "auto_commit":
+    print(f"✅ 자동 커밋 승인 (품질 점수: {decisions['code_stability'].score}/5.0)")
+```
+
+#### 🌐 TypeScript SDK (`@typesafe-ai/sdk`)
+```typescript
+import { TypeSafeClient, noul, choice, score } from "@typesafe-ai/sdk";
+
+const client = new TypeSafeClient();
+
+const result = await client.systemOne({
+  state: {
+    user_request: "결제 취소 처리해줘",
+    order_status: "COMPLETED",
+    elapsed_days: 3
+  },
+  questions: {
+    can_refund: noul("주문 상태와 경과일을 고려할 때 환불 승인 조건을 충족하는가?"),
+    escalate_reason: choice("환불 불가 시 사유 분류", {
+      expired: "환불 가능 기간(7일) 경과",
+      already_refunded: "이미 환불 완료됨",
+      valid_to_proceed: "정상 환불 가능"
+    }),
+    fraud_risk: score("이상 결제 의심 위험도 (1: 안전 ~ 5: 위험)", 5)
+  }
+});
+
+if (result.can_refund.value && result.fraud_risk.score < 2.0) {
+  // 고속 자동 환불 액션 실행 (소요시간: 70ms)
+}
+```
+
+---
+
+### 4️⃣ AAG 하네스 표준 응답 기준 (Response Protocol Criteria)
+
+모든 에이전트 간 통신과 도구 실행 결과는 다음 **4대 응답 기준**을 엄격히 준수해야 합니다:
+
+| 기준 항목 | 요구사항 및 표준 규약 | 위반 시 하네스 조치 |
+| :--- | :--- | :--- |
+| **1. Envelope Wrapping** | 모든 응답은 `trace_id`, `status`, `timestamp`, `metrics`, `payload`를 감싸는 최상위 표준 봉투(Envelope)를 필수로 포함 | 비정형 원시 데이터 반환 시 즉시 거절 및 래핑 강제 |
+| **2. Discriminated Union** | 다형적 응답은 `kind` 필드를 태그로 두어 런타임 패턴 매칭 및 완벽한 정적 타입 가드(Type Guard) 지원 | 불명확한 다형성 감지 시 스키마 유효성 실패 처리 |
+| **3. Deterministic Exit** | 태스크 수행 결과는 반드시 표준 숫자형 `exit_code` (0: 성공, 비0: 에러 코드)와 FSM 전이 신호를 명시 | 성공/실패 여부가 모호한 자연어 응답 원천 차단 |
+| **4. Zero Chatter Guarantee** | 마크다운 코드 블록(```)이나 부가 인사말 없이 순수 역직렬화 가능한 구조화 데이터(JSON/TOON)만 스트림 | 정규식 프리프로세서 또는 파서 레벨에서 사전 필터링 |
+
+---
+
+### 5️⃣ 핵심 타입 카탈로그 (Core Type System Catalog)
+
+AAG v3.0 하네스에서 에이전트 런타임이 운용하는 5대 표준 타입 정의입니다:
+
+#### 1. `AgentResponseEnvelope<T>` (최상위 표준 응답 봉투)
+```typescript
+interface AgentResponseEnvelope<T> {
+  trace_id: string;              // 세션 및 분산 추적 고유 ID (UUID v4)
+  task_id: string;               // 현재 실행 중인 서브태스크 ID
+  sender: "tram" | "dev" | "data" | "security" | "user"; // 발신 주체
+  status: "SUCCESS" | "FAILURE" | "REPAIR_REQUIRED" | "HALTED";
+  timestamp: string;             // ISO-8601 UTC
+  metrics: {
+    latency_ms: number;          // 모델 응답 지연시간 (TypeSafe AI: 2~70ms, LLM: 1000~5000ms)
+    tokens_consumed: number;     // 소모된 토큰 총량
+    turn_index: number;          // 서브태스크 내 현재 턴 (1~5)
+  };
+  payload: T;                    // 실제 타입화된 본문 데이터
+}
+```
+
+#### 2. `TaskExecutionResult` (작업 실행 결과 명세)
+```typescript
+interface TaskExecutionResult {
+  exit_code: number;             // 0: 완벽 성공, 1+: 실패
+  affected_files: string[];      // 수정된 파일 목록 (최대 5개 제한 준수 확인용)
+  verification_command: string;  // 검증에 사용된 단일 명령어 (e.g., 'pytest tests/test_user.py')
+  stdout_summary: string;        // 실행 요약 로그 (최대 500자 압축)
+  error_trace?: string;          // 실패 시 에러 트레이스백
+  rollback_checkpoint?: string;  // 생성된 Git 체크포인트 해시 (e.g., 'chk_a8f9c1')
+}
+```
+
+#### 3. `ToolCallAction` (도구 실행 권능 명세 - Discriminated Union)
+```typescript
+type ToolCallAction = 
+  | { kind: "FILE_WRITE"; path: string; content: string; overwrite: boolean }
+  | { kind: "FILE_PATCH"; path: string; search_block: string; replace_block: string }
+  | { kind: "SHELL_EXEC"; command: string; timeout_sec: number; env_vars?: Record<string, string> }
+  | { kind: "ONTOLOGY_QUERY"; target_entity: string; max_hops: 1 | 2; filter_expr?: string }
+  | { kind: "TYPESAFE_DECISION"; questions: Record<string, "NOUL" | "CHOICE" | "SCORE"> }
+  | { kind: "HUMAN_ESCALATE"; reason_code: "SECURITY" | "ARCH_CORE" | "RETRY_LIMIT"; message: string };
+```
+
+#### 4. `StateTransitionSignal` (루프 제어 및 FSM 전이 명세)
+```typescript
+interface StateTransitionSignal {
+  current_state: "INGESTION" | "RUNNING" | "EVAL_GATE" | "SELF_HEAL";
+  next_transition: "PROCEED_TO_EVAL" | "REQUEST_RETRY" | "TERMINATE_SUCCESS" | "TRIGGER_ROLLBACK";
+  reason: string;
+  cycle_detected: boolean;       // 동일 에러 2회 이상 반복 감지 여부
+  circuit_breaker_tripped: boolean; // 토큰/턴 한도 초과 여부
+}
+```
+
+#### 5. `ZeroShotRepairPayload` (타입 복구 전용 스니펫)
+```typescript
+interface ZeroShotRepairPayload {
+  error_type: "SCHEMA_VALIDATION_ERROR";
+  failed_loc: (string | number)[]; // 에러 발생 경로 (e.g. ['payload', 'exit_code'])
+  expected_rule: string;          // 기대 타입 및 제약 (e.g. 'integer in range [0, 255]')
+  actual_value_dump: string;      // 실제 수신된 잘못된 값
+  fix_instruction: string;        // 1문장 직관적 수정 지시문
+}
+```
+
+---
+
+### 6️⃣ 구현 예시: Pydantic v2 & Zod 스키마
+
+```python
+# Python Pydantic v2 구현 예시 (Agent Backend & Harness)
+from pydantic import BaseModel, Field, conint, constr
+from typing import Literal, List, Optional
+from datetime import datetime
+
+class TaskExecutionResultModel(BaseModel):
+    task_id: constr(pattern=r"^TASK-\d{2}$") = Field(..., description="태스크 고유 식별자")
+    exit_code: conint(ge=0, le=255) = Field(..., description="프로세스 종료 코드 (0=성공)")
+    affected_files: List[str] = Field(..., max_length=5, description="수정된 파일 목록 (원자적 작업 5개 제한)")
+    verification_command: str = Field(..., description="기계적 검증 커맨드")
+    status: Literal["SUCCESS", "FAILED", "BLOCKED"]
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Config:
+        frozen = True # 불변 객체로 보장
+```
+
+```typescript
+// TypeScript Zod 구현 예시 (Agent Client & Web Gateway)
+import { z } from 'zod';
+
+export const TaskExecutionResultSchema = z.object({
+  task_id: z.string().regex(/^TASK-\d{2}$/, "TASK-XX 형식이어야 합니다."),
+  exit_code: z.number().int().min(0).max(255),
+  affected_files: z.array(z.string()).max(5, "원자적 변경 원칙: 1회 최대 5개 파일로 제한됩니다."),
+  verification_command: z.string().min(1, "검증 명령어는 필수입니다."),
+  status: z.enum(["SUCCESS", "FAILED", "BLOCKED"]),
+  created_at: z.string().datetime()
+});
+
+export type TaskExecutionResult = z.infer<typeof TaskExecutionResultSchema>;
+```
+
+#### 📋 실제 모델 출력 JSON 인출 예시
+```json
+{
+  "trace_id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+  "task_id": "TASK-03",
+  "sender": "dev",
+  "status": "SUCCESS",
+  "timestamp": "2026-09-30T02:25:00Z",
+  "metrics": {
+    "latency_ms": 612,
+    "tokens_consumed": 184,
+    "turn_index": 1
+  },
+  "payload": {
+    "task_id": "TASK-03",
+    "exit_code": 0,
+    "affected_files": [
+      "src/auth/jwt_provider.py",
+      "tests/test_jwt_provider.py"
+    ],
+    "verification_command": "pytest tests/test_jwt_provider.py -v",
+    "status": "SUCCESS",
+    "created_at": "2026-09-30T02:24:59Z"
+  }
+}
+```
 
 ---
 

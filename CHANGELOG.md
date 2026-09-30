@@ -24,9 +24,16 @@
   - 무한 루프 방지를 위한 수렴 보장(Halting Guarantee) 및 서킷 브레이커 도입.
   - 턴 한도(최대 5턴) 및 동일 에러 반복 탐지(Cycle Detection) 기반 조기 탈출 프로토콜 수립.
   - Mermaid 기반 루프 엔지니어링 FSM 상태 전이 다이어그램 추가.
-- **Typesafe AI & Schema-First Protocol 명문화**:
-  - 비정형 자연어 프롬프팅 지양, Pydantic / Zod / JSON Schema / TOON 기반의 강력한 입출력 타입 계약 강제.
-  - 타입 불일치 시 LLM 재추론 없이 컴파일러/타입체커 에러 피드백을 통한 즉시 복구(Zero-shot Schema Repair) 체계 구축.
+- **Typesafe AI & Schema-First Protocol 명문화 및 규격화**:
+  - **TypeSafe AI (System One 패러다임) 도입**: 생성형 LLM(System 2)과 초고속 비자기회귀 의사결정 모델(System 1 Jev)을 결합한 하이브리드 타입 안전 아키텍처 정립.
+  - **3대 의사결정 프리미티브 규격화**:
+    - `Noul`: 0.0~1.0 통계적 보정 확률을 반환하는 불리언/진위 판정 프리미티브 (보안 가드레일, 종료 판정).
+    - `Choice`: 최대 255개 선택지 중 단일 최적 레이블 및 후보별 확률 분포를 반환하는 다중 분류 프리미티브 (인텐트 라우팅, FSM 제어).
+    - `Score`: 2~10단계 순서화된 루브릭 기반 연속 척도 평가 프리미티브 (Tier-2 코드 품질, 취약점 심각도).
+  - **3대 본질 규명**: 왜 필요한가(환각 차단 & 계약 우선), 왜 빠른가(Non-Autoregressive 단일 패스, 잡담 토큰 0개, $0 Retry), 왜 LLM과 동시 설계인가(System 1+2 결합, 어텐션 공간 축소, 외과수술적 Zero-shot Repair).
+  - **4대 표준 응답 기준**: Envelope Wrapping, Discriminated Union, Deterministic Exit, Zero Chatter Guarantee.
+  - **5대 핵심 타입 카탈로그 및 구현 명세**: `AgentResponseEnvelope<T>`, `TaskExecutionResult`, `ToolCallAction`, `StateTransitionSignal`, `ZeroShotRepairPayload` 정의.
+  - **공식 SDK 및 실전 코드 예시**: TypeSafe AI 공식 Python(`typesafe-sdk`) & TypeScript(`@typesafe-ai/sdk`) 연동 코드, Pydantic v2 및 Zod 스키마, 실제 모델 JSON 인출 샘플 제공.
 - **경량 모델(SLM / Flash) 최적화 전략 수립**:
   - Frontier LLM 의존도를 낮추고 Gemini Flash / Claude Haiku / 로컬 SLM 중심의 고속·저비용(90% 이상 절감) 아키텍처 제시.
   - 모델 캐스케이딩(Model Cascading): 아키텍처 수립(Frontier) → 구현/변환(SLM) → 검증/판정(결정론적 하네스).
